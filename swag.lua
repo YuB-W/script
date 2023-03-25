@@ -441,38 +441,37 @@ function randomString()
 	return table.concat(array)
 end
 
-PARENT = nil
 if get_hidden_gui or gethui then
-	local hiddenUI = get_hidden_gui or gethui
-	    local gui = self:object("ScreenGui", {
-	    gui.Name = randomString()
-	    Parent = hiddenUI,
-	    ZIndexBehavior = Enum.ZIndexBehavior.Global
-	})
+    local hiddenUI = get_hidden_gui or gethui
+    local gui = self:object("ScreenGui", {
+        Name = randomString(),
+        Parent = hiddenUI,
+        ZIndexBehavior = Enum.ZIndexBehavior.Global
+    })
 elseif (not is_sirhurt_closure) and (syn and syn.protect_gui) then
-	    local gui = self:object("ScreenGui", {
-	    gui.Name = randomString()
-	    syn.protect_gui(Main)
-	    gui.Parent = COREGUI
-	    gui.Name = randomString()
-	    Parent = COREGUI,
-	    ZIndexBehavior = Enum.ZIndexBehavior.Global
-	})
+    local gui = self:object("ScreenGui", {
+        Name = randomString(),
+        Parent = COREGUI,
+        ZIndexBehavior = Enum.ZIndexBehavior.Global
+    })
+    syn.protect_gui(gui)
 elseif COREGUI:FindFirstChild('RobloxGui') then
-	    local gui = self:object("ScreenGui", {
-	    gui.Name = randomString()
-	    Parent = COREGUI.RobloxGui,
-	    ZIndexBehavior = Enum.ZIndexBehavior.Global
-	})
-
+    local gui = self:object("ScreenGui", {
+        Name = randomString(),
+        Parent = COREGUI.RobloxGui,
+        ZIndexBehavior = Enum.ZIndexBehavior.Global
+    })
 else
-	    local gui = self:object("ScreenGui", {
-	    gui.Name = randomString()
-	    Parent = COREGUI,
-	    ZIndexBehavior = Enum.ZIndexBehavior.Global
-	})
-		
-})
+    local gui = self:object("ScreenGui", {
+        Name = randomString(),
+        Parent = COREGUI,
+        ZIndexBehavior = Enum.ZIndexBehavior.Global
+    })
+end
+
+-- Set Parent to nil if it was not set in any of the above conditions
+if gui and not gui.Parent then
+    gui.Parent = nil
 end
 
 
