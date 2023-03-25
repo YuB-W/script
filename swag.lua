@@ -432,47 +432,41 @@ function Library:create(options)
 
 	self.CurrentTheme = options.Theme
 
-function randomString()
-	local length = math.random(10,20)
-	local array = {}
-	for i = 1, length do
-		array[i] = string.char(math.random(32, 126))
+	function randomString()
+		local length = math.random(10,20)
+		local array = {}
+		for i = 1, length do
+			array[i] = string.char(math.random(32, 126))
+		end
+		return table.concat(array)
 	end
-	return table.concat(array)
-end
 
-if get_hidden_gui or gethui then
-    local hiddenUI = get_hidden_gui or gethui
-    local gui = self:object("ScreenGui", {
-        Name = randomString(),
-        Parent = hiddenUI,
-        ZIndexBehavior = Enum.ZIndexBehavior.Global
-    })
-elseif (not is_sirhurt_closure) and (syn and syn.protect_gui) then
-    local gui = self:object("ScreenGui", {
-        Name = randomString(),
-        Parent = COREGUI,
-        ZIndexBehavior = Enum.ZIndexBehavior.Global
-    })
-    syn.protect_gui(gui)
-elseif COREGUI:FindFirstChild('RobloxGui') then
-    local gui = self:object("ScreenGui", {
-        Name = randomString(),
-        Parent = COREGUI.RobloxGui,
-        ZIndexBehavior = Enum.ZIndexBehavior.Global
-    })
-else
-    local gui = self:object("ScreenGui", {
-        Name = randomString(),
-        Parent = COREGUI,
-        ZIndexBehavior = Enum.ZIndexBehavior.Global
-    })
-end
+	local guiParent = nil
 
--- Set Parent to nil if it was not set in any of the above conditions
-if gui and not gui.Parent then
-    gui.Parent = nil
-end
+	if get_hidden_gui or gethui then
+	    local hiddenUI = get_hidden_gui or gethui
+	    guiParent = hiddenUI
+	elseif (not is_sirhurt_closure) and (syn and syn.protect_gui) then
+	    guiParent = COREGUI
+	    local gui = self:object("ScreenGui", {
+		Name = randomString(),
+		Parent = guiParent,
+		ZIndexBehavior = Enum.ZIndexBehavior.Global
+	    })
+	    syn.protect_gui(gui)
+	elseif COREGUI:FindFirstChild('RobloxGui') then
+	    guiParent = COREGUI.RobloxGui
+	else
+	    guiParent = COREGUI
+	end
+
+	if guiParent then
+	    local gui = self:object("ScreenGui", {
+		Name = randomString(),
+		Parent = guiParent,
+		ZIndexBehavior = Enum.ZIndexBehavior.Global
+	    })
+	end
 
 
 	local notificationHolder = gui:object("Frame", {
