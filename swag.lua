@@ -449,7 +449,6 @@ if get_hidden_gui or gethui then
 elseif (not is_sirhurt_closure) and (syn and syn.protect_gui) then
     guiParent = COREGUI
     local gui = self:object("ScreenGui", {
-        Name = randomString(),
         Parent = guiParent,
         ZIndexBehavior = Enum.ZIndexBehavior.Global
     })
@@ -460,10 +459,8 @@ else
     guiParent = COREGUI
 end
 
--- Create the ScreenGui if a parent has been found
 if guiParent then
     local gui = self:object("ScreenGui", {
-        Name = randomString(),
         Parent = guiParent,
         ZIndexBehavior = Enum.ZIndexBehavior.Global
     })
