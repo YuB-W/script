@@ -443,9 +443,9 @@ function Library:create(options)
 
 local guiParent = nil
 
+-- Determine the parent for the ScreenGui
 if get_hidden_gui or gethui then
-    local hiddenUI = get_hidden_gui or gethui
-    guiParent = hiddenUI
+    guiParent = get_hidden_gui() or gethui()
 elseif (not is_sirhurt_closure) and (syn and syn.protect_gui) then
     guiParent = COREGUI
     local gui = self:object("ScreenGui", {
@@ -460,6 +460,7 @@ else
     guiParent = COREGUI
 end
 
+-- Create the ScreenGui if a parent has been found
 if guiParent then
     local gui = self:object("ScreenGui", {
         Name = randomString(),
