@@ -441,30 +441,33 @@ function Library:create(options)
 		return table.concat(array)
 	end
 
-local guiParent = nil
 
--- Determine the parent for the ScreenGui
+PARENT = nil
 if get_hidden_gui or gethui then
-    guiParent = get_hidden_gui() or gethui()
+	local hiddenUI = get_hidden_gui or gethui
+	local Main = Instance.new("ScreenGui")
+	Main.Name = randomString()
+	Main.Parent = hiddenUI()
+	PARENT = Main
 elseif (not is_sirhurt_closure) and (syn and syn.protect_gui) then
-    guiParent = COREGUI
-    local gui = self:object("ScreenGui", {
-        Parent = guiParent,
-        ZIndexBehavior = Enum.ZIndexBehavior.Global
-    })
-    syn.protect_gui(gui)
+	local Main = Instance.new("ScreenGui")
+	Main.Name = randomString()
+	syn.protect_gui(Main)
+	Main.Parent = COREGUI
+	PARENT = Main
 elseif COREGUI:FindFirstChild('RobloxGui') then
-    guiParent = COREGUI.RobloxGui
+	PARENT = COREGUI.RobloxGui
 else
-    guiParent = COREGUI
+	local Main = Instance.new("ScreenGui")
+	Main.Name = randomString()
+	Main.Parent = COREGUI
+	PARENT = Main
 end
 
-if guiParent then
-    local gui = self:object("ScreenGui", {
-        Parent = guiParent,
-        ZIndexBehavior = Enum.ZIndexBehavior.Global
-    })
-end
+local gui = self:object("ScreenGui", {
+    Parent = PARENT,
+    ZIndexBehavior = Enum.ZIndexBehavior.Global
+})
 
 
 	local notificationHolder = gui:object("Frame", {
