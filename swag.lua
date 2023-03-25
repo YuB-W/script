@@ -441,32 +441,33 @@ function Library:create(options)
 		return table.concat(array)
 	end
 
-	local guiParent = nil
+local guiParent = nil
 
-	if get_hidden_gui or gethui then
-	    local hiddenUI = get_hidden_gui or gethui
-	    guiParent = hiddenUI
-	elseif (not is_sirhurt_closure) and (syn and syn.protect_gui) then
-	    guiParent = COREGUI
-	    local gui = self:object("ScreenGui", {
-		Name = randomString(),
-		Parent = guiParent,
-		ZIndexBehavior = Enum.ZIndexBehavior.Global
-	    })
-	    syn.protect_gui(gui)
-	elseif COREGUI:FindFirstChild('RobloxGui') then
-	    guiParent = COREGUI.RobloxGui
-	else
-	    guiParent = COREGUI
-	end
+if get_hidden_gui or gethui then
+    local hiddenUI = get_hidden_gui or gethui
+    guiParent = hiddenUI
+elseif (not is_sirhurt_closure) and (syn and syn.protect_gui) then
+    guiParent = COREGUI
+    local gui = self:create("ScreenGui", {
+        Name = randomString(),
+        Parent = guiParent,
+        ZIndexBehavior = Enum.ZIndexBehavior.Global
+    })
+    syn.protect_gui(gui)
+elseif COREGUI:FindFirstChild('RobloxGui') then
+    guiParent = COREGUI.RobloxGui
+else
+    guiParent = COREGUI
+end
 
-	if guiParent then
-	    local gui = self:object("ScreenGui", {
-		Name = randomString(),
-		Parent = guiParent,
-		ZIndexBehavior = Enum.ZIndexBehavior.Global
-	    })
-	end
+if guiParent then
+    local gui = self:create("ScreenGui", {
+        Name = randomString(),
+        Parent = guiParent,
+        ZIndexBehavior = Enum.ZIndexBehavior.Global
+    })
+end
+
 
 
 	local notificationHolder = gui:object("Frame", {
