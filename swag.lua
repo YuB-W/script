@@ -444,29 +444,36 @@ end
 PARENT = nil
 if get_hidden_gui or gethui then
 	local hiddenUI = get_hidden_gui or gethui
-	local Main = Instance.new("ScreenGui")
-	Main.Name = randomString()
-	Main.Parent = hiddenUI()
-	PARENT = Main
+	    local gui = self:object("ScreenGui", {
+	    gui.Name = randomString()
+	    Parent = hiddenUI,
+	    ZIndexBehavior = Enum.ZIndexBehavior.Global
+	})
 elseif (not is_sirhurt_closure) and (syn and syn.protect_gui) then
-	local Main = Instance.new("ScreenGui")
-	Main.Name = randomString()
-	syn.protect_gui(Main)
-	Main.Parent = COREGUI
-	PARENT = Main
+	    local gui = self:object("ScreenGui", {
+	    gui.Name = randomString()
+	    syn.protect_gui(Main)
+	    gui.Parent = COREGUI
+	    gui.Name = randomString()
+	    Parent = COREGUI,
+	    ZIndexBehavior = Enum.ZIndexBehavior.Global
+	})
 elseif COREGUI:FindFirstChild('RobloxGui') then
-	PARENT = COREGUI.RobloxGui
-else
-	local Main = Instance.new("ScreenGui")
-	Main.Name = randomString()
-	Main.Parent = COREGUI
-	PARENT = Main
-end
+	    local gui = self:object("ScreenGui", {
+	    gui.Name = randomString()
+	    Parent = COREGUI.RobloxGui,
+	    ZIndexBehavior = Enum.ZIndexBehavior.Global
+	})
 
-local gui = self:object("ScreenGui", {
-    Parent = PARENT,
-    ZIndexBehavior = Enum.ZIndexBehavior.Global
+else
+	    local gui = self:object("ScreenGui", {
+	    gui.Name = randomString()
+	    Parent = COREGUI,
+	    ZIndexBehavior = Enum.ZIndexBehavior.Global
+	})
+		
 })
+end
 
 
 	local notificationHolder = gui:object("Frame", {
