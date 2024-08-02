@@ -1,16 +1,15 @@
 import numpy as np
 from scipy.optimize import minimize
 import folium
-import matplotlib.pyplot as plt
 from sklearn.ensemble import IsolationForest
 import json
 from datetime import datetime
 import os
 import time
 import subprocess
-import threading
 import asyncio
-from scapy.all import sniff, Dot11
+import tkinter as tk
+from tkinter import messagebox
 from geopy.distance import great_circle
 
 # פונקציה להמרת RSSI למרחק
@@ -33,14 +32,6 @@ def trilaterate(positions, distances):
     initial_guess = np.mean(positions, axis=0)
     result = minimize(objective_function, initial_guess, method='L-BFGS-B')
     return result.x
-
-# פונקציה לניהול מתקפות באמצעות Scapy
-def packet_handler(pkt):
-    if pkt.haslayer(Dot11):
-        if pkt.getlayer(Dot11).type == 0 and pkt.getlayer(Dot11).subtype == 4:
-            print("Deauthentication Attack Detected!")
-        elif pkt.getlayer(Dot11).type == 2 and pkt.getlayer(Dot11).subtype == 8:
-            print("Handshake Capture Detected!")
 
 # פונקציה לאיסוף נתוני RSSI מכרטיסי רשת
 async def collect_rssi_data(interface_list):
@@ -98,9 +89,6 @@ async def monitor_network():
     interface_list = ['wlan0', 'wlan1', 'wlan2', 'wlan3']
     positions = [(32.0853, 34.7818), (32.0800, 34.7800), (32.0900, 34.7900)]  # מיקומים ידועים של TP-Link
 
-    # התחלת ניטור חבילות
-    sniff(prn=packet_handler, iface='wlan0', store=0, timeout=10)
-
     while True:
         start_time = time.time()
 
@@ -117,10 +105,6 @@ async def monitor_network():
         display_map(positions, attacker_position)
 
         # ניתוח מתקפות
-        detect_deauthentication_attack('wifi_traffic.log')
-        detect_handshake_capture('handshake_captures/')
-
-        # ניתוח ויזואלי של RSSI
         outliers = analyze_rssi(rssi_values)
         print("Outliers detected:", outliers)
         save_data(positions, rssi_values, attacker_position)
@@ -130,5 +114,26 @@ async def monitor_network():
         sleep_time = max(0, 10 - elapsed_time)  # המתנה עד 10 שניות
         await asyncio.sleep(sleep_time)
 
+# יצירת GUI באמצעות Tkinter
+def create_gui():
+    root = tk.Tk()
+    root.title("WiFi Attack Monitor")
+
+    tk.Label(root, text="WiFi Attack Monitor", font=("Helvetica", 16)).pack(pady=10)
+
+    map_frame = tk.Frame(root)
+    map_frame.pack(pady=10)
+
+    tk.Button(root, text="Show Map", command=lambda: os.system("wifi_attack_map.html")).pack(pady=10)
+
+    root.geometry("400x300")
+    return root
+
 # התחלת ניטור
-asyncio.run(monitor_network())
+def start_monitoring():
+    asyncio.run(monitor_network())
+
+# יצירת GUI והפעלת ניטור ברקע
+root = create_gui()
+threading.Thread(target=start_monitoring, daemon=True).start()
+root.mainloop()
